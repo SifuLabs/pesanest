@@ -3,7 +3,7 @@
 import type { SignInCredential, SignInResponse } from '@/@types/auth'
 
 export const onSignInWithCredentials = async (
-    { email, password }: SignInCredential, callbackUrl:string
+    { email, password }: SignInCredential, callbackUrl: string
 ): Promise<SignInResponse | { error: string; status: number; details?: unknown }> => {
     try {
         const res = await fetch('http://localhost:8080/auth/login', {

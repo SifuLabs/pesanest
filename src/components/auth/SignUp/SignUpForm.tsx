@@ -46,6 +46,9 @@ const validationSchema: ZodType<SignUpFormSchema> = z
         path: ['confirmPassword'],
     })
 
+const DEFAULT_PHONE = "";
+const DEFAULT_ROLE = "member";
+
 const SignUpForm = (props: SignUpFormProps) => {
     const { onSignUp, className, setMessage } = props
 
@@ -57,11 +60,13 @@ const SignUpForm = (props: SignUpFormProps) => {
         control,
     } = useForm<SignUpFormSchema>({
         resolver: zodResolver(validationSchema),
+        defaultValues: {
+            phone: DEFAULT_PHONE,
+            role: DEFAULT_ROLE,
+        },
     })
 
     const handleSignUp = async (values: SignUpFormSchema) => {
-        values.phone=""
-        values.role="member"
         if (onSignUp) {
             onSignUp({ values, setSubmitting, setMessage })
         }

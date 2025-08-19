@@ -25,6 +25,9 @@ const SignIn = ({
 }: SignInProps) => {
     const [message, setMessage] = useTimeOutMessage()
 
+    // Define message types
+    const SUCCESS_MESSAGE = "Sign in successful!"
+
     const mode = useTheme((state) => state.mode)
 
     return (
@@ -43,18 +46,15 @@ const SignIn = ({
                     Please enter your credentials to sign in!
                 </p>
             </div>
-            {message ==="Sign in successful!" ? (
-                <Alert showIcon className="mb-4" type="success">
-                    <span className="break-all">{message}</span>
-                </Alert>
-            ) : (
-                message && (
-                    <Alert showIcon className="mb-4" type="danger">
-                        <span className="break-all">{message}</span>
-                    </Alert>
-                )
-            )
-        }
+        {message && (
+            <Alert
+                showIcon
+                className="mb-4"
+                type={message === SUCCESS_MESSAGE ? "success" : "danger"}
+            >
+                <span className="break-all">{message}</span>
+            </Alert>
+        )}
             <SignInForm
                 setMessage={setMessage}
                 passwordHint={
@@ -74,7 +74,7 @@ const SignIn = ({
                 <div className="flex items-center gap-2 mb-6">
                     <div className="border-t border-gray-200 dark:border-gray-800 flex-1 mt-[1px]" />
                     <p className="font-semibold heading-text">
-                        or countinue with
+                        or continue with
                     </p>
                     <div className="border-t border-gray-200 dark:border-gray-800 flex-1 mt-[1px]" />
                 </div>
