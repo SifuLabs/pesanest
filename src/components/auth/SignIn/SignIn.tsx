@@ -43,11 +43,18 @@ const SignIn = ({
                     Please enter your credentials to sign in!
                 </p>
             </div>
-            {message && (
-                <Alert showIcon className="mb-4" type="danger">
+            {message ==="Sign in successful!" ? (
+                <Alert showIcon className="mb-4" type="success">
                     <span className="break-all">{message}</span>
                 </Alert>
-            )}
+            ) : (
+                message && (
+                    <Alert showIcon className="mb-4" type="danger">
+                        <span className="break-all">{message}</span>
+                    </Alert>
+                )
+            )
+        }
             <SignInForm
                 setMessage={setMessage}
                 passwordHint={
