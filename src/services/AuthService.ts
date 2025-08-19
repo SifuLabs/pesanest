@@ -7,12 +7,26 @@ import type {
     SignUpResponse,
 } from '@/@types/auth'
 
-export async function apiSignUp(data: SignUpCredential) {
-    return ApiService.fetchDataWithAxios<SignUpResponse>({
-        url: '/auth/sign-up',
-        method: 'post',
-        data,
+export async function apiSignUp(data: SignUpCredential): Promise<SignUpResponse> {
+    const res = await fetch('http://localhost:8080/auth/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
     })
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        return {
+            status: 'failed',
+            message: errorData.message || 'Failed to register',
+        }
+    }
+    const result = await res.json()
+    return {
+        status: result.status || 'success',
+        message: result.message || 'Account created successfully',
+    }
 }
 
 export async function apiForgotPassword<T>(data: ForgotPassword) {
