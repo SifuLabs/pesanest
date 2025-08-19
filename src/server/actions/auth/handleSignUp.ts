@@ -1,19 +1,40 @@
 'use server'
 
-import type { SignUpCredential } from '@/@types/auth'
+import type { SignUpCredential, SignUpResponse } from '@/@types/auth'
 
 export const onSignUpWithCredentials = async ({
     email,
     userName,
-}: SignUpCredential) => {
+    password,
+}: SignUpCredential): Promise<SignUpResponse> => {
     try {
-        /** Pretend create user */
+        const res = await fetch('http://localhost:8080/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                userName,
+                password,
+            }),
+        })
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}))
+            return {
+                status: 'failed',
+                message: errorData.message || 'Failed to register',
+            }
+        }
+        const data = await res.json()
         return {
-            email,
-            userName,
-            id: userName,
+            status: data.status || 'success',
+            message: data.message || 'Account created successfully',
         }
     } catch (error) {
-        throw error
+        return {
+            status: 'failed',
+            message: (error as Error).message || 'Sign up failed',
+        }
     }
 }
