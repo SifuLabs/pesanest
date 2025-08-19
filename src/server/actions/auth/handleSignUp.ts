@@ -4,7 +4,7 @@ import type { SignUpCredential, SignUpResponse } from '@/@types/auth'
 
 export const onSignUpWithCredentials = async ({
     email,
-    userName,
+    name,
     password,
 }: SignUpCredential): Promise<SignUpResponse> => {
     try {
@@ -15,7 +15,7 @@ export const onSignUpWithCredentials = async ({
             },
             body: JSON.stringify({
                 email,
-                userName,
+                name,
                 password,
             }),
         })

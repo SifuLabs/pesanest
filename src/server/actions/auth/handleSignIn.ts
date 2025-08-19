@@ -1,31 +1,37 @@
 'use server'
 
-import { signIn } from '@/auth'
-import appConfig from '@/configs/app.config'
-import { AuthError } from 'next-auth'
-import type { SignInCredential } from '@/@types/auth'
+import type { SignInCredential, SignInResponse } from '@/@types/auth'
 
 export const onSignInWithCredentials = async (
-    { email, password }: SignInCredential,
-    callbackUrl?: string,
-) => {
+    { email, password }: SignInCredential, callbackUrl: string
+): Promise<SignInResponse | { error: string; status: number; details?: unknown }> => {
     try {
-        await signIn('credentials', {
-            email,
-            password,
-            redirectTo: callbackUrl || appConfig.authenticatedEntryPath,
-        })
-    } catch (error) {
-        if (error instanceof AuthError) {
-            /** Customize error message based on AuthError */
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            switch ((error.type as any).type) {
-                case 'CredentialsSignin':
-                    return { error: 'Invalid credentials!' }
-                default:
-                    return { error: 'Something went wrong!' }
-            }
+        const res = await fetch('http://localhost:8080/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            return {
+                error: data.error || data.message || 'Invalid credentials!',
+                status: res.status,
+                details: data,
+            };
         }
-        throw error
+
+        data.status = 200;
+        data.callbackUrl = callbackUrl;
+        return data;
+    } catch (error) {
+        return {
+            error: (error as Error)?.message || 'Sign in failed',
+            status: 0,
+            details: error,
+        };
     }
 }

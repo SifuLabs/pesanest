@@ -11,10 +11,12 @@ import type { ZodType } from 'zod'
 import type { CommonProps } from '@/@types/common'
 
 type SignUpFormSchema = {
-    userName: string
+    name: string
     password: string
     email: string
     confirmPassword: string
+    phone?: string
+    role?: string
 }
 
 export type OnSignUpPayload = {
@@ -33,7 +35,7 @@ interface SignUpFormProps extends CommonProps {
 const validationSchema: ZodType<SignUpFormSchema> = z
     .object({
         email: z.string({ required_error: 'Please enter your email' }),
-        userName: z.string({ required_error: 'Please enter your name' }),
+        name: z.string({ required_error: 'Please enter your name' }),
         password: z.string({ required_error: 'Password Required' }),
         confirmPassword: z.string({
             required_error: 'Confirm Password Required',
@@ -43,6 +45,9 @@ const validationSchema: ZodType<SignUpFormSchema> = z
         message: 'Password not match',
         path: ['confirmPassword'],
     })
+
+const DEFAULT_PHONE = "";
+const DEFAULT_ROLE = "member";
 
 const SignUpForm = (props: SignUpFormProps) => {
     const { onSignUp, className, setMessage } = props
@@ -55,6 +60,10 @@ const SignUpForm = (props: SignUpFormProps) => {
         control,
     } = useForm<SignUpFormSchema>({
         resolver: zodResolver(validationSchema),
+        defaultValues: {
+            phone: DEFAULT_PHONE,
+            role: DEFAULT_ROLE,
+        },
     })
 
     const handleSignUp = async (values: SignUpFormSchema) => {
@@ -67,17 +76,17 @@ const SignUpForm = (props: SignUpFormProps) => {
         <div className={className}>
             <Form onSubmit={handleSubmit(handleSignUp)}>
                 <FormItem
-                    label="User name"
-                    invalid={Boolean(errors.userName)}
-                    errorMessage={errors.userName?.message}
+                    label="Full Name"
+                    invalid={Boolean(errors.name)}
+                    errorMessage={errors.name?.message}
                 >
                     <Controller
-                        name="userName"
+                        name="name"
                         control={control}
                         render={({ field }) => (
                             <Input
                                 type="text"
-                                placeholder="User Name"
+                                placeholder="Full Name"
                                 autoComplete="off"
                                 {...field}
                             />

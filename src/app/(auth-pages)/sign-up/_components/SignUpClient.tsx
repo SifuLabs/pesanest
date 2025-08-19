@@ -15,17 +15,21 @@ const SignUpClient = () => {
         setSubmitting,
         setMessage,
     }: OnSignUpPayload) => {
+        setSubmitting(true)
         try {
-            setSubmitting(true)
-            await apiSignUp(values)
-            toast.push(
-                <Notification title="Account created!" type="success">
-                    You can now sign in from our sign in page
-                </Notification>,
-            )
-            router.push('/sign-in')
+            const res = await apiSignUp(values)
+            if (res.status === 'success') {
+                toast.push(
+                    <Notification title="Account created!" type="success">
+                        You can now sign in from our sign in page
+                    </Notification>,
+                )
+                router.push('/sign-in')
+            } else {
+                setMessage(res.message || 'Registration failed')
+            }
         } catch (error) {
-            setMessage(error as string)
+            setMessage((error as Error).message || 'Registration failed')
         } finally {
             setSubmitting(false)
         }
